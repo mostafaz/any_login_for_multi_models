@@ -15,7 +15,7 @@ module AnyLogin
 
         def any_login_sign_in
           params = user_id.split('-')
-          @loginable = params.first.constantize.find(params.last)
+          @loginable = params.first.constantize.find(get_user_id)
 
           sign_in = DEFAULT_SIGN_IN
           instance_exec(@loginable, &sign_in)
@@ -23,6 +23,15 @@ module AnyLogin
           redirect_to main_app.send(AnyLogin.redirect_path_after_login)
         end
 
+        def get_user_id
+          if user_id.split('-').count > 2
+            username = user_id.split('-').first + "-"
+            uuid = user_id.gsub(username, '')
+            uuid
+          else
+            user_id.split('-').last
+          end 
+        end
       end
 
     end
